@@ -51,12 +51,14 @@ public class UserLogin extends AppCompatActivity {
 //        tv_registerBtn = findViewById(R.id.tv_registerButton);
  //       tv_forgotPassword = findViewById(R.id.tv_forgotPassword);
 
+/*
         tv_forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UserLogin.this, UserResetPasswordActivity.class));
             }
         });
+*/
 
         progressDialog = new ProgressDialog(this);
 
@@ -70,12 +72,12 @@ public class UserLogin extends AppCompatActivity {
             }
         });
 
-        tv_registerBtn.setOnClickListener(new View.OnClickListener() {
+        /*tv_registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UserLogin.this, UserRegister.class));
             }
-        });
+        });*/
 
     }
 

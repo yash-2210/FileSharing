@@ -1,8 +1,10 @@
 package com.example.botimei;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
     List<UserModel> userModelList = new ArrayList<>();
     RecyclerView rv_showAllUsers;
     ShowUserAdapter adapter;
+    private static final int REQUEST_CODE = 101;
+
 
     CircleImageView cv_showAllReceivedFiles, cv_fileReceived;
-    TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
 
     @Override
@@ -62,14 +66,10 @@ public class MainActivity extends AppCompatActivity {
         rv_showAllUsers.setHasFixedSize(true);
         rv_showAllUsers.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
-        imei= telephonyManager.getDeviceId();
-        Toast.makeText(this, "IMEI : "+imei, Toast.LENGTH_SHORT).show();
 
         username = getIntent().getStringExtra("username");
         Log.d("TAG1", "username: " + username);
         Toast.makeText(MainActivity.this, "username: " + username, Toast.LENGTH_SHORT).show();
-
-        Toast.makeText(MainActivity.this, "IMEI : "+ imei, Toast.LENGTH_SHORT).show();
 
         cv_fileReceived.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         loadUser();
+
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
+            return;
+        }
+        imei= telephonyManager.getDeviceId();
+        Toast.makeText(this, "IMEI : "+imei, Toast.LENGTH_SHORT).show();
 
     }
 
