@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "239556787679",
+    "project_id": "cowert-31114",
+    "storage_bucket": "cowert-31114.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239556787679:android:1bc2c8151ccfe29537186a",
+        "android_client_info": {
+          "package_name": "com.example.botimei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239556787679-p88dvnmj797vt8nqrp8pi3efs3bkrioe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAkjPudEcitMq08Akiz_L0Z7e1oM8TMRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239556787679-p88dvnmj797vt8nqrp8pi3efs3bkrioe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239556787679:android:877718764f4256a337186a",
+        "android_client_info": {
+          "package_name": "com.example.cowert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239556787679-p88dvnmj797vt8nqrp8pi3efs3bkrioe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAkjPudEcitMq08Akiz_L0Z7e1oM8TMRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239556787679-p88dvnmj797vt8nqrp8pi3efs3bkrioe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
