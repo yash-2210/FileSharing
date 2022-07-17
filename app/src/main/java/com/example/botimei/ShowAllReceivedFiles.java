@@ -2,6 +2,7 @@ package com.example.botimei;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public class ShowAllReceivedFiles extends AppCompatActivity {
 
     RecyclerView rv_fileShared;
     String username, id, email, image, sender;
+    String IMEI;
 
     List<FileShared> fileSharedList = new ArrayList<>();
     ShowFileReceivedAdapter adapter;
@@ -40,8 +42,9 @@ public class ShowAllReceivedFiles extends AppCompatActivity {
 
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
-
+        IMEI = intent.getStringExtra("IMEI");
         getFileShared();
+//        Toast.makeText(this,IMEI,Toast.LENGTH_LONG);
 
     }
 

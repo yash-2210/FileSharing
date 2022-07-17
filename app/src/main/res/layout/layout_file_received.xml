@@ -42,6 +42,18 @@
             android:textColor="@color/textColor"
             android:textSize="16sp" />
 
+
+        <TextView
+            android:id="@+id/tv_imei"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_fileSender"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="16dp"
+            android:padding="8dp"
+            android:text="IMEI: 111111111111111 "
+            android:textColor="@color/textColor"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

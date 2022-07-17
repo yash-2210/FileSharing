@@ -44,6 +44,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -179,8 +180,8 @@ public class ShareFile extends AppCompatActivity {
 //            System.out.println("Image URI"+imageuri);
             filename = getFileName(imageuri);
 //            System.out.println("FILE NAME:"+filename);
-            filename = getFileName(imageuri)+" "+IMEINumber;
-            System.out.println("FILE NAME WITH IMEI:"+filename);
+//            filename = getFileName(imageuri)+" "+IMEINumber;
+//            System.out.println("FILE NAME WITH IMEI:"+filename);
 
             Uri uri = data.getData();
             File file = null;
@@ -211,6 +212,7 @@ public class ShareFile extends AppCompatActivity {
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("id", id);
+                    hashMap.put("IMEI", IMEINumber);
                     hashMap.put("username", username);
                     hashMap.put("sender", sender);
                     hashMap.put("filename", filename);
@@ -237,6 +239,7 @@ public class ShareFile extends AppCompatActivity {
             });
         }
     }
+
 
     private void showKeyDialog(File file) {
         String keyAES = "AES" + username + filename;
