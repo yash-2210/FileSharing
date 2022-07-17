@@ -71,6 +71,7 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String permissi
 
     }
 }
+
     public static String convertStringToBinary(String input) {
 
         StringBuilder result = new StringBuilder();
