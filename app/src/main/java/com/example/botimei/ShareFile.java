@@ -151,7 +151,7 @@ public class ShareFile extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 filename = "";
-                                sendSMS(phone, fileCode);
+                               // sendSMS(phone, fileCode);
                                 getFileShared();
                                 Toast.makeText(ShareFile.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
                             }
@@ -189,7 +189,7 @@ public class ShareFile extends AppCompatActivity {
         }
     }
 
-    private void sendSMS(String number, String msg) {
+   /* private void sendSMS(String number, String msg) {
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
@@ -197,7 +197,7 @@ public class ShareFile extends AppCompatActivity {
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(number, null, msg, pi, null);
 
-    }
+    }*/
 
     @SuppressLint("Range")
     public String getFileName(Uri uri) {

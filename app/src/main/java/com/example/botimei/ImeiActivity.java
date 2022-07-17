@@ -40,20 +40,16 @@ public class ImeiActivity extends AppCompatActivity {
         Toast.makeText(this, "IMEI : "+IMEINumber, Toast.LENGTH_SHORT).show();
         System.out.println("IMEI Number :"+IMEINumber+"\n");
         textView.setText(IMEINumber);
-        /* commented text
 //        String result = convertStringToBinary(IMEINumber);
 
 //        System.out.println(result);
 
-         */
         long no= Long.parseLong(IMEINumber);
         decimalToBinary(no);
         // pretty print the binary format
-        /* commented text
-//        System.out.println(prettyBinary(result, 8, " "));
+        //System.out.println(prettyBinary(result, 8, " "));
 
-         */
-        }
+    }
 
 @Override
 
@@ -65,10 +61,10 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String permissi
         case REQUEST_CODE: {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                  Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
             }
             else {
-//                  Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+                System.out.println("Permission not granted, Check your Android version");
             }
 
         }
@@ -127,7 +123,4 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String permissi
         // Print Binary
         printBinary(binary, id);
     }
-
-    // Main Driver Code
-
 }
