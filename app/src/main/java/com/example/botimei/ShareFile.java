@@ -1,21 +1,28 @@
 package com.example.botimei;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +47,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShareFile extends AppCompatActivity {
 
@@ -56,6 +64,10 @@ public class ShareFile extends AppCompatActivity {
     List<FileShared> fileSharedList = new ArrayList<>();
     ShowFileSharedAdapter adapter;
 
+    String IMEINumber;
+    private static final int REQUEST_CODE = 101;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +100,63 @@ public class ShareFile extends AppCompatActivity {
             }
         });
 
+
+
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(ShareFile.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ShareFile.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
+            return;
+        }
+        IMEINumber = telephonyManager.getDeviceId();
+//        textView.setText(IMEINumber);
+
+        System.out.println("IMEI Number:"+IMEINumber);
+//        System.out.println("IMEI Number:"+convertStringToBinary(IMEINumber));
+        System.out.println(prettyBinary(convertStringToBinary(IMEINumber), 8, " "));
+
+
     }
+
+    public static String convertStringToBinary(String input) {
+
+        StringBuilder result = new StringBuilder();
+        char[] chars = input.toCharArray();
+        for (char aChar : chars) {
+            result.append(
+                    String.format("%8s", Integer.toBinaryString(aChar))   // char -> int, auto-cast
+                            .replaceAll(" ", "0")                         // zero pads
+            );
+        }
+        return result.toString();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static String prettyBinary(String binary, int blockSize, String separator) {
+
+        List<String> result = new ArrayList<>();
+        int index = 0;
+        while (index < binary.length()) {
+            result.add(binary.substring(index, Math.min(index + blockSize, binary.length())));
+            index += blockSize;
+        }
+
+        return result.stream().collect(Collectors.joining(separator));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     private void shareFile() {
         Intent galleryIntent = new Intent();
@@ -108,7 +176,11 @@ public class ShareFile extends AppCompatActivity {
 
             dialog.show();
             imageuri = data.getData();
+//            System.out.println("Image URI"+imageuri);
             filename = getFileName(imageuri);
+//            System.out.println("FILE NAME:"+filename);
+            filename = getFileName(imageuri)+" "+IMEINumber;
+            System.out.println("FILE NAME WITH IMEI:"+filename);
 
             Uri uri = data.getData();
             File file = null;
@@ -152,7 +224,7 @@ public class ShareFile extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 filename = "";
-                               sendSMS(phone, fileCode);
+//                               sendSMS(phone, fileCode);
                                 getFileShared();
                                 Toast.makeText(ShareFile.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
                             }

@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         imei= telephonyManager.getDeviceId();
-        Toast.makeText(this, "IMEI : "+imei, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "IMEI : "+imei, Toast.LENGTH_SHORT).show();
 
     }
 
