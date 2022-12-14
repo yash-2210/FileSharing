@@ -1,7 +1,7 @@
 package com.example.botimei.model;
 
 public class FileShared {
-    String fileUrl, id, username, sender, filename, IMEI;
+    String fileUrl, id, username, sender, filename, IMEI, Contact;
 
     public String getFileUrl() {
         return fileUrl;
@@ -51,15 +51,24 @@ public class FileShared {
         this.IMEI = imei;
     }
 
+    public String getContact() {
+        return Contact;
+    }
+
+    public void setContact(String contact) {
+        this.Contact = contact;
+    }
+
     public FileShared() {
     }
 
-    public FileShared(String fileUrl, String id, String username, String sender, String filename, String IMEI) {
+    public FileShared(String fileUrl, String id, String username, String sender, String filename, String IMEI, String Contact) {
         this.fileUrl = fileUrl;
         this.id = id;
         this.username = username;
         this.sender = sender;
         this.filename = filename;
         this.IMEI = IMEI;
+        this.Contact = Contact;
     }
 }

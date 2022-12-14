@@ -26,7 +26,7 @@ public class ShowAllReceivedFiles extends AppCompatActivity {
 
     RecyclerView rv_fileShared;
     String username, id, email, image, sender;
-    String IMEI;
+    String IMEI,Contact;
 
     List<FileShared> fileSharedList = new ArrayList<>();
     ShowFileReceivedAdapter adapter;
@@ -43,6 +43,7 @@ public class ShowAllReceivedFiles extends AppCompatActivity {
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         IMEI = intent.getStringExtra("IMEI");
+        Contact = intent.getStringExtra("Contact");
         getFileShared();
 //        Toast.makeText(this,IMEI,Toast.LENGTH_LONG);
 
