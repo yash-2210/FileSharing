@@ -69,6 +69,20 @@
             android:textColor="@color/textColor"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/tv_SMS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_contact"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="156dp"
+            android:padding="8dp"
+            android:text="SMS: This is My SMS "
+            android:textColor="@color/textColor"
+            android:textSize="16sp" />
+
 
     </RelativeLayout>
 

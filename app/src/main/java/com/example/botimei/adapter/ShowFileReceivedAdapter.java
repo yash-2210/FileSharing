@@ -41,6 +41,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
         holder.tv_fileSender.setText("sender: " + model.getSender());
         holder.tv_imei.setText("IMEI: " + model.getIMEI());
         holder.tv_contact.setText("Contact: " + model.getContact());
+        holder.tv_SMS.setText("SMS: " + model.getSMS());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +60,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
 
     class viewholder extends RecyclerView.ViewHolder {
 
-        TextView tv_fileName, tv_fileSender, tv_imei, tv_contact;
+        TextView tv_fileName, tv_fileSender, tv_imei, tv_contact, tv_SMS;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +69,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
             tv_fileSender = itemView.findViewById(R.id.tv_fileSender);
             tv_imei = itemView.findViewById(R.id.tv_imei);
             tv_contact = itemView.findViewById(R.id.tv_contact);
+            tv_SMS = itemView.findViewById(R.id.tv_SMS);
 
         }
     }
