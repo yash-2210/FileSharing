@@ -20,13 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class ShowAllReceivedFiles extends AppCompatActivity {
 
     RecyclerView rv_fileShared;
-    String username, id, email, image, sender;
-    String IMEI,Contact,SMS;
+    String username;
 
     List<FileShared> fileSharedList = new ArrayList<>();
     ShowFileReceivedAdapter adapter;
@@ -42,13 +42,7 @@ public class ShowAllReceivedFiles extends AppCompatActivity {
 
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
-        IMEI = intent.getStringExtra("IMEI");
-        Contact = intent.getStringExtra("Contact");
-        SMS = intent.getStringExtra("SMS");
-        System.out.println("HEllo WORLD: "+SMS);
         getFileShared();
-//        Toast.makeText(this,IMEI,Toast.LENGTH_LONG);
-
     }
 
     private void getFileShared() {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.botimei.R;
 import com.example.botimei.model.FileShared;
 
+import java.util.Base64;
 import java.util.List;
 
 public class ShowFileSharedAdapter extends RecyclerView.Adapter<ShowFileSharedAdapter.viewholder> {
@@ -36,7 +37,17 @@ public class ShowFileSharedAdapter extends RecyclerView.Adapter<ShowFileSharedAd
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
         FileShared model = fileSharedList.get(position);
-        holder.tv_fileName.setText(model.getFilename());
+        byte[] decodedBytes = Base64.getDecoder().decode(model.getFilename());
+        String decodedString = new String(decodedBytes);
+        String s = " ";
+        for(int index = 0; index < decodedString.length(); index+=9) {
+            String temp = decodedString.substring(index, index+8);
+            int num = Integer.parseInt(temp,2);
+            char letter = (char) num;
+            s = s+letter;
+        }
+        String data [] = s.split(";");
+        holder.tv_fileName.setText(data[3]);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

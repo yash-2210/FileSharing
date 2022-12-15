@@ -15,6 +15,7 @@ import com.example.botimei.R;
 import com.example.botimei.model.FileShared;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceivedAdapter.viewholder> {
@@ -37,11 +38,23 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
         FileShared model = fileSharedList.get(position);
-        holder.tv_fileName.setText(model.getFilename());
+
+        byte[] decodedBytes = Base64.getDecoder().decode(model.getFilename());
+        String decodedString = new String(decodedBytes);
+        String s = " ";
+        for(int index = 0; index < decodedString.length(); index+=9) {
+            String temp = decodedString.substring(index, index+8);
+            int num = Integer.parseInt(temp,2);
+            char letter = (char) num;
+            s = s+letter;
+        }
+        String data [] = s.split(";");
+
+        holder.tv_fileName.setText(data[3]);
         holder.tv_fileSender.setText("sender: " + model.getSender());
-        holder.tv_imei.setText("IMEI: " + model.getIMEI());
-        holder.tv_contact.setText("Contact: " + model.getContact());
-        holder.tv_SMS.setText("SMS: " + model.getSMS());
+        holder.tv_imei.setText("IMEI: " + data[0]);
+        holder.tv_contact.setText("Contact: " + data[1]);
+        holder.tv_SMS.setText("SMS: " + data[2]);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
