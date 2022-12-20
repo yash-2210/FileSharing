@@ -113,10 +113,10 @@ public class ShareFile extends AppCompatActivity {
 
 
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (ActivityCompat.checkSelfPermission(ShareFile.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ShareFile.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
-            return;
-        }
+//        if (ActivityCompat.checkSelfPermission(ShareFile.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(ShareFile.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
+//            return;
+//        }
         IMEINumber = telephonyManager.getDeviceId();
 //        textView.setText(IMEINumber);
 
@@ -166,7 +166,7 @@ public class ShareFile extends AppCompatActivity {
     private void shareFile() {
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("audio/mpeg");
+        galleryIntent.setType("audio/*");
         startActivityForResult(galleryIntent, 1);
 
     }
@@ -192,7 +192,11 @@ public class ShareFile extends AppCompatActivity {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
             final String messagePushID = timestamp;
 
-            final StorageReference filepath = storageReference.child(messagePushID + "." + "mp3");
+            String[] file_format;
+            file_format = filename.split("\\.",2);
+//            System.out.println("FILENAME: "+filename);
+//            System.out.println("FORMAT: "+file_format[1]);
+            final StorageReference filepath = storageReference.child(messagePushID + "." + file_format[1]);
             filepath.putFile(imageuri).continueWithTask((Continuation) task -> {
                 if (!task.isSuccessful()) {
                     throw task.getException();
@@ -214,7 +218,7 @@ public class ShareFile extends AppCompatActivity {
                     String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
 
                     String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
-                    System.out.println("Base64::"+encodedString);
+//                    System.out.println("Base64::"+encodedString);
 
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
 
@@ -343,10 +347,10 @@ public class ShareFile extends AppCompatActivity {
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 //                nameList.add(name);
 
-                if(name.equals("Test Cowert") || name.equals("Test abhinav"))
-                {
+//                if(name.equals("Test Cowert") || name.equals("Test abhinav"))
+//                {
                     contact_name.add(name);
-                }
+//                }
 
                 if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
                     Cursor pCur = cr.query(
@@ -357,10 +361,10 @@ public class ShareFile extends AppCompatActivity {
                     while (pCur.moveToNext()) {
                         String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 //                        numberArray.add(phoneNo);
-                        if(name.equals("Test Cowert") || name.equals("Test abhinav"))
-                        {
+//                        if(name.equals("Test Cowert") || name.equals("Test abhinav"))
+//                        {
                             contact_number.add(phoneNo);
-                        }
+//                        }
 
                     }
                     pCur.close();
