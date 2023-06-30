@@ -1,11 +1,9 @@
 package com.example.botimei;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -15,9 +13,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
-import android.provider.Telephony;
 import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,9 +43,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +68,8 @@ public class ShareFile extends AppCompatActivity {
     ArrayList contact_name = new ArrayList();
     ArrayList contact_number = new ArrayList();
     public static String msgData;
+
+    public static long beginEncode,endEncode;
 
     private static final int REQUEST_CODE = 101;
 
@@ -178,6 +173,9 @@ public class ShareFile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
 
+            beginEncode = System.currentTimeMillis();
+            System.out.println("Start Time: "+beginEncode);
+
             dialog = new ProgressDialog(this);
             dialog.setMessage("Encrypting & Uploading");
 
@@ -220,7 +218,13 @@ public class ShareFile extends AppCompatActivity {
                     String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
 
                     String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
-//                    System.out.println("Base64::"+encodedString);
+                    endEncode = System.currentTimeMillis();
+                    System.out.println("End Time: "+endEncode);
+                    System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
+
+//                    System.out.println("Total Bits: "+encodedString.length());
+                    System.out.println("Total Bits: "+(prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData), 8, " ")).length());
+
 
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
 
