@@ -3,17 +3,23 @@ package com.example.botimei.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.botimei.R;
+import com.example.botimei.ShareFile;
 import com.example.botimei.model.FileShared;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -22,6 +28,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
 
     Context context;
     List<FileShared> fileSharedList = new ArrayList<>();
+    String data [];
 
     public ShowFileReceivedAdapter(Context context, List<FileShared> fileSharedList) {
         this.context = context;
@@ -39,6 +46,12 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
         FileShared model = fileSharedList.get(position);
 
+        String getBase64audio = model.getData();
+//        System.out.println(getBase64audio);
+
+        String decodefile = extractString(model.getFile());
+//        System.out.println("Demo Decode: "+decodefile);
+
         byte[] decodedBytes = Base64.getDecoder().decode(model.getFilename());
         String decodedString = new String(decodedBytes);
         String s = " ";
@@ -48,19 +61,26 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
             char letter = (char) num;
             s = s+letter;
         }
-        String data [] = s.split(";");
+        data = s.split(";");
 
         holder.tv_fileName.setText(data[3]);
         holder.tv_fileSender.setText("sender: " + model.getSender());
-        holder.tv_imei.setText("Device ID: " + data[0]);
-        holder.tv_contact.setText("Contact: " + data[1]);
-        holder.tv_SMS.setText("SMS: " + data[2]);
+
+
+        holder.tv_imei.setText("Device ID: ");
+        holder.tv_contact.setText("Contact: ");
+        holder.tv_SMS.setText("SMS: ");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(model.getFileUrl()));
-                context.startActivity(browserIntent);
+                decodeAndWriteToFile(context,getBase64audio,data[3]);
+                Toast.makeText(context,"File Downloaded Successfully",Toast.LENGTH_SHORT).show();
+                holder.tv_imei.setText("Device ID: " + data[0]);
+                holder.tv_contact.setText("Contact: " + data[1]);
+                holder.tv_SMS.setText("SMS: " + data[2]);
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(model.getFileUrl()));
+//                context.startActivity(browserIntent);
             }
         });
 
@@ -84,6 +104,32 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
             tv_contact = itemView.findViewById(R.id.tv_contact);
             tv_SMS = itemView.findViewById(R.id.tv_SMS);
 
+        }
+    }
+
+    public static String extractString(String inputString) {
+        StringBuilder outputString = new StringBuilder();
+        int semicolonIndex = inputString.lastIndexOf(";");
+        int length = inputString.length();
+
+        for (int i = 0; i < length; i++) {
+            if ((i + 1) % 3 == 0 && i < semicolonIndex) {
+                outputString.append(inputString.charAt(i));
+            }
+        }
+
+        return outputString.toString();
+    }
+
+    public static void decodeAndWriteToFile(Context context, String base64EncodedAudio, String filename) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(base64EncodedAudio);
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), filename);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(decodedBytes);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
