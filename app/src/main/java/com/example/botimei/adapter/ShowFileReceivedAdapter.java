@@ -49,7 +49,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
         String getBase64audio = model.getData();
 //        System.out.println(getBase64audio);
 
-        String decodefile = extractString(model.getFile());
+        String decodefile = extractCharacters(model.getFile());
 //        System.out.println("Demo Decode: "+decodefile);
 
         byte[] decodedBytes = Base64.getDecoder().decode(model.getFilename());
@@ -107,18 +107,44 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
         }
     }
 
-    public static String extractString(String inputString) {
-        StringBuilder outputString = new StringBuilder();
-        int semicolonIndex = inputString.lastIndexOf(";");
-        int length = inputString.length();
+    public static boolean isPrime(int n) {
+        if (n <= 1) {
+            return false;
+        }
+        if (n == 2) {
+            return true;
+        }
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        for (int i = 0; i < length; i++) {
-            if ((i + 1) % 3 == 0 && i < semicolonIndex) {
-                outputString.append(inputString.charAt(i));
+    public static String extractCharacters(String string) {
+        List<Integer> primeSeries = new ArrayList<>();
+        for (int i = 2; i <= string.length(); i++) {
+            if (isPrime(i)) {
+                primeSeries.add(i);
             }
         }
 
-        return outputString.toString();
+        StringBuilder result = new StringBuilder();
+        int index = 0; // Start with index 1 since we need to extract after 2 positions initially
+        int semicolonIndex = string.lastIndexOf(";");
+        // System.out.println(semicolonIndex);
+
+        for (int step : primeSeries) {
+            index = index + step;
+            if (index >= string.length() || index == semicolonIndex) {
+                break;
+            }
+            result.append(string.charAt(index));
+            index = index + 1;
+        }
+
+        return result.toString();
     }
 
     public static void decodeAndWriteToFile(Context context, String base64EncodedAudio, String filename) {
