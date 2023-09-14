@@ -1,5 +1,9 @@
 package com.example.botimei;
 
+import static com.example.botimei.HuffmanCoding.buildHuffmanCodes;
+import static com.example.botimei.HuffmanCoding.buildHuffmanTree;
+import static com.example.botimei.HuffmanCoding.encodeHuffman;
+
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -55,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -85,6 +90,8 @@ public class ShareFile extends AppCompatActivity {
     public static long beginEncode,endEncode;
 
     private static final int REQUEST_CODE = 101;
+
+    public static HuffmanNode huffmanTree;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -239,7 +246,8 @@ public class ShareFile extends AppCompatActivity {
                     // Read the audio file as bytes
                     byte[] audioBytes = new byte[0];
                     try {
-                        audioBytes = readBytesFromFile(Environment.getExternalStorageDirectory()+"/"+filepath_audio); //Need to remove External Storage when we execute it from Physical Device
+//                        audioBytes = readBytesFromFile(Environment.getExternalStorageDirectory()+"/"+filepath_audio); //Use this when we execute it from Virtual Device
+                        audioBytes = readBytesFromFile("/"+filepath_audio); //Use this when we execute it from Physical Device
 //                        System.out.println("Audio Data in Bytes: "+audioBytes);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -271,8 +279,15 @@ public class ShareFile extends AppCompatActivity {
 //                    System.out.println("Sensitive Data: "+sensitive_data);
 //                    System.out.println("Sensitive Data Length: "+sensitive_data.length());
 
-                    String encodefile = insertCharacters(base64StringAudio, sensitive_data);
+//                    String encodefile = insertCharacters(base64StringAudio, sensitive_data);
 //                    System.out.println("Demo Encode: "+encodefile);
+
+                    huffmanTree = buildHuffmanTree(sensitive_data);
+                    Map<Character, String> huffmanCodes = new HashMap<>();
+                    buildHuffmanCodes(huffmanTree, "", huffmanCodes);
+
+                    String encodedStr = encodeHuffman(sensitive_data, huffmanCodes);
+//                    System.out.println("Encoded String: "+encodedStr);
 
 
                     String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
@@ -295,7 +310,7 @@ public class ShareFile extends AppCompatActivity {
                     hashMap.put("filename", encodedString);
                     hashMap.put("fileUrl", myurl);
                     hashMap.put("phone", phone);
-                    hashMap.put("file", encodefile);
+                    hashMap.put("file", encodedStr);
                     hashMap.put("data", base64StringAudio);
 
 
@@ -347,60 +362,6 @@ public class ShareFile extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    public static boolean isPrime(int n) {
-        if (n <= 1) {
-            return false;
-        }
-        if (n == 2) {
-            return true;
-        }
-        for (int i = 2; i <= Math.sqrt(n); i++) {
-            if (n % i == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static List<Integer> generatePrimes(int count) {
-        List<Integer> primes = new ArrayList<>();
-        int num = 2;
-        while (primes.size() < count) {
-            if (isPrime(num)) {
-                primes.add(num);
-            }
-            num++;
-        }
-        return primes;
-    }
-
-    public static String insertCharacters(String firstString, String secondString) {
-        List<Integer> primeSeries = generatePrimes(secondString.length());
-        StringBuilder result = new StringBuilder();
-        int index = 0;
-        int i = 0;
-
-        for (int primeNumber : primeSeries) {
-            // Move ahead in the first string based on the prime number
-            index += primeNumber;
-            // Insert the character from the second string into the result
-            result.append(firstString, 0, index).append(secondString.charAt(i));
-            // Update the first string to remove the inserted character
-            firstString = firstString.substring(index);
-            // Reset the index for the next iteration
-            index = 0;
-            i++;
-        }
-
-        // Add the remaining characters from the first string to the result
-        result.append(firstString);
-
-        return result.toString();
-    }
-
-
-
 
     private void sendSMS(String number, String msg) {
 
