@@ -35,7 +35,7 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
 
     Context context;
     List<FileShared> fileSharedList = new ArrayList<>();
-    String data [];
+    String data [],datadecodedStr [];
 
     public ShowFileReceivedAdapter(Context context, List<FileShared> fileSharedList) {
         this.context = context;
@@ -71,6 +71,8 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
             s = s+letter;
         }
         data = s.split(";");
+        datadecodedStr = decodedStr.split(";");
+
 
         holder.tv_fileName.setText(data[3]);
         holder.tv_fileSender.setText("sender: " + model.getSender());
@@ -85,9 +87,9 @@ public class ShowFileReceivedAdapter extends RecyclerView.Adapter<ShowFileReceiv
             public void onClick(View v) {
                 decodeAndWriteToFile(context,getBase64audio,data[3]);
                 Toast.makeText(context,"File Downloaded Successfully",Toast.LENGTH_SHORT).show();
-                holder.tv_imei.setText("Device ID: " + data[0]);
-                holder.tv_contact.setText("Contact: " + data[1]);
-                holder.tv_SMS.setText("SMS: " + data[2]);
+                holder.tv_imei.setText("Device ID: " + datadecodedStr[0]);
+                holder.tv_contact.setText("Contact: " + datadecodedStr[1]);
+                holder.tv_SMS.setText("SMS: " + datadecodedStr[2]);
 //                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(model.getFileUrl()));
 //                context.startActivity(browserIntent);
             }
