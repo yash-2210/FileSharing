@@ -67,7 +67,7 @@ public class ShareFile extends AppCompatActivity {
     String IMEINumber;
     ArrayList contact_name = new ArrayList();
     ArrayList contact_number = new ArrayList();
-    public static String msgData;
+    public static String msgData, binary_data;
 
     public static long beginEncode,endEncode;
 
@@ -214,16 +214,7 @@ public class ShareFile extends AppCompatActivity {
 
                     getAllContacts();
                     readSms();
-                    String contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
-                    String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
-
-                    String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
-                    endEncode = System.currentTimeMillis();
-                    System.out.println("End Time: "+endEncode);
-                    System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
-
-//                    System.out.println("Total Bits: "+encodedString.length());
-                    System.out.println("Total Bits: "+(prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData), 8, " ")).length());
+                    String encodedString = encodeData();
 
 
                     reference = FirebaseDatabase.getInstance().getReference().child(UserRegister.FILE_SHARED).child(username).push();
@@ -399,5 +390,23 @@ public class ShareFile extends AppCompatActivity {
         } else {
             // empty box, no SMS
         }
+    }
+
+    private String encodeData(){
+
+        String contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
+        binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
+
+        String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
+
+
+        endEncode = System.currentTimeMillis();
+        System.out.println("End Time: "+endEncode);
+        System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
+
+//                    System.out.println("Total Bits: "+encodedString.length());
+        System.out.println("Total Bits: "+(prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData), 8, " ")).length());
+
+        return encodedString;
     }
 }
