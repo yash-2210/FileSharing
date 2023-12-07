@@ -239,7 +239,8 @@ public class ShareFile extends AppCompatActivity {
                     // Read the audio file as bytes
                     byte[] audioBytes = new byte[0];
                     try {
-                        audioBytes = readBytesFromFile(Environment.getExternalStorageDirectory()+"/"+filepath_audio); //Need to remove External Storage when we execute it from Physical Device
+                        audioBytes = readBytesFromFile("/"+filepath_audio); //Run from Emulator
+                        audioBytes = readBytesFromFile(Environment.getExternalStorageDirectory()+"/"+filepath_audio); //Run from Physical Device
 //                        System.out.println("Audio Data in Bytes: "+audioBytes);
                     } catch (IOException e) {
                         e.printStackTrace();
